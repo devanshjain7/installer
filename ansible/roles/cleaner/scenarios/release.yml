@@ -23,5 +23,6 @@
     - "{{ controller_tarball_dir }}"
     - "{{ dock_tarball_dir }}"
     - "{{ sushi_tarball_dir }}"
+    - "{{ gelato_tarball_dir }}"
   ignore_errors: yes
   tags: clean

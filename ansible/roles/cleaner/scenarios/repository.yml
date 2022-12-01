@@ -27,6 +27,13 @@
       - /bin/false
   when: go_path == ""
 
+- name: clean sodafoundation multi-cloud engine data
+  shell: make clean
+  args:
+    chdir: "{{ go_path }}/src/github.com/sodafoundation/multi-cloud"
+  tags: gelato
+  ignore_errors: yes
+
 - name: clean sodafoundation api data
   shell: make clean
   args:

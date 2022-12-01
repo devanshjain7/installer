@@ -20,37 +20,6 @@
   gather_facts: true
   any_errors_fatal: true
   become: True
-  
-# Defines deployment design and assigns role to server groups
-- name: Install delfin
-  hosts: delfin-nodes
-  remote_user: root
-  vars_files:
-    - group_vars/delfin.yml
-  gather_facts: false
-  become: True
-  tasks:
-    - import_role:
-        name: delfin-installer
-      when:
-        - enable_delfin == true
-  tags: delfin
-
-- name: Install SRM Toolchain
-  hosts: controllers
-  remote_user: root
-  vars_files:
-    - group_vars/common.yml
-    - group_vars/delfin.yml
-    - group_vars/srm-toolchain.yml
-  gather_facts: false
-  become: True
-  tasks:
-    - import_role:
-        name: srm-toolchain-installer
-      when:
-        - install_srm_toolchain == true
-  tags: srm_toolchain
 
 - name: Install keystone services
   hosts: controllers
@@ -70,6 +39,52 @@
       when:
         - enable_dashboard == true or enable_hotpot == true or enable_gelato == true or gelato_ha == true
   tags: keystone
+
+# Defines deployment design and assigns role to server groups
+- name: Install delfin
+  hosts: delfin-nodes
+  remote_user: root
+  vars_files:
+    - group_vars/delfin.yml
+  gather_facts: false
+  become: True
+  tasks:
+    - import_role:
+        name: delfin-installer
+      when:
+        - enable_delfin == true
+  tags: delfin
+
+- name: Install Gelato/Gelato-HA
+  hosts: controllers
+  remote_user: root
+  vars_files:
+    - group_vars/gelato.yml
+    - group_vars/gelato-ha.yml
+  gather_facts: false
+  become: True
+  tasks:
+    - import_role:
+        name: gelato-installer
+      when:
+        - enable_gelato == true or gelato_ha == true
+  tags: gelato
+
+- name: Install SRM Toolchain
+  hosts: controllers
+  remote_user: root
+  vars_files:
+    - group_vars/common.yml
+    - group_vars/delfin.yml
+    - group_vars/srm-toolchain.yml
+  gather_facts: false
+  become: True
+  tasks:
+    - import_role:
+        name: srm-toolchain-installer
+      when:
+        - install_srm_toolchain == true
+  tags: srm_toolchain
 
 - name: Deploy SODA Hotpot(api, controller, dock) installer
   hosts: controllers
@@ -179,4 +194,3 @@
       when:
         - enable_orchestration == true
   tags: orchestration
-
